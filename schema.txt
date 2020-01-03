@@ -1,0 +1,27 @@
+* users
+_id : String 
+username: String
+role : String
+password : String
+
+* todolists
+_id : ObjectID
+users_id : String
+todo_id : String(ObjectID-->ToString)
+todo : String
+desc : String
+done : Bool
+
+
+
+use tododb
+
+db.users.drop()
+db.tokens.drop()
+db.todolists.drop()
+
+db.createCollection("users")
+db.createCollection("tokens")
+db.createCollection("todolists")
+
+db.users.createIndex({ users_id:1, todo_id: 1 }, { unique:true })
