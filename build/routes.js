@@ -175,8 +175,30 @@ var _default = app => {
     });
     res.json(response);
   });
+  app.delete('/todolist_long/:id', async (req, res) => {
+    console.log("### PUT /todolist_long/:id : " + req.users.users_id);
+    (0, _systemSleep.default)(1000);
+    let users_id = req.users.users_id;
+    let _id = req.params.id;
+    let response = await (0, _dao.deleteTodo)({
+      users_id,
+      _id
+    });
+    res.json(response);
+  });
   app.put('/todolist/:id/done', async (req, res) => {
     console.log("### PUT /todolist/:id/done : " + req.users.users_id);
+    let users_id = req.users.users_id;
+    let _id = req.params.id;
+    let response = await (0, _dao.toggleDone)({
+      users_id,
+      _id
+    });
+    res.json(response);
+  });
+  app.put('/todolist_long/:id/done', async (req, res) => {
+    console.log("### PUT /todolist/:id/done : " + req.users.users_id);
+    (0, _systemSleep.default)(1000);
     let users_id = req.users.users_id;
     let _id = req.params.id;
     let response = await (0, _dao.toggleDone)({

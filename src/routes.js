@@ -108,9 +108,27 @@ export default (app) => {
         let response = await deleteTodo({ users_id, _id });
         res.json(response);
     })
+    
+    app.delete('/todolist_long/:id', async(req, res)=> {
+        console.log("### PUT /todolist_long/:id : " + req.users.users_id);
+        sleep(1000);
+        let users_id = req.users.users_id;
+        let _id = req.params.id;
+        let response = await deleteTodo({ users_id, _id });
+        res.json(response);
+    })
 
     app.put('/todolist/:id/done', async(req, res)=> {
         console.log("### PUT /todolist/:id/done : " + req.users.users_id);
+        let users_id = req.users.users_id;
+        let _id = req.params.id;
+        let response = await toggleDone({ users_id, _id });
+        res.json(response);
+    })
+
+    app.put('/todolist_long/:id/done', async(req, res)=> {
+        console.log("### PUT /todolist/:id/done : " + req.users.users_id);
+        sleep(1000);
         let users_id = req.users.users_id;
         let _id = req.params.id;
         let response = await toggleDone({ users_id, _id });
