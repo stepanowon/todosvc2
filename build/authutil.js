@@ -9,21 +9,21 @@ var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
 var _crypto = require("crypto");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var secretKey = "mysecretkey";
+let secretKey = "mysecretkey";
 
 if (process.env.JWT_SECRET_KEY) {
   secretKey = process.env.JWT_SECRET_KEY;
 }
 
-var createToken = function createToken(_ref) {
-  var users_id = _ref.users_id,
-      role = _ref.role;
-
-  var token = _jsonwebtoken["default"].sign({
-    users_id: users_id,
-    role: role
+const createToken = ({
+  users_id,
+  role
+}) => {
+  let token = _jsonwebtoken.default.sign({
+    users_id,
+    role
   }, secretKey, {
     algorithm: "HS256",
     expiresIn: "7d"
@@ -34,18 +34,18 @@ var createToken = function createToken(_ref) {
 
 exports.createToken = createToken;
 
-var checkToken = function checkToken(token, callback) {
-  _jsonwebtoken["default"].verify(token, secretKey, {
+const checkToken = (token, callback) => {
+  _jsonwebtoken.default.verify(token, secretKey, {
     algorithms: ['HS256']
-  }, function (err, decode) {
+  }, (err, decode) => {
     if (err) {
       callback({
         status: "fail",
         message: err
       });
     } else {
-      var exp = new Date(decode.exp * 1000);
-      var now = Date.now();
+      const exp = new Date(decode.exp * 1000);
+      const now = Date.now();
 
       if (exp < now) {
         callback({
@@ -64,7 +64,7 @@ var checkToken = function checkToken(token, callback) {
 
 exports.checkToken = checkToken;
 
-var computeHMAC = function computeHMAC(id, password) {
+const computeHMAC = (id, password) => {
   return (0, _crypto.createHash)('sha256').update(id + password).digest('hex');
 };
 

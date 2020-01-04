@@ -19,6 +19,7 @@ export const createUser = async ({ _id, username, password, role }) => {
             { todo:"Vue 학습", desc:"Vue 학습을 해야 합니다", done:false },
             { todo:"야구장", desc:"프로야구 경기도 봐야합니다.", done:false },
         ];
+        
         for (let i=0; i < sampledata.length; i++) {
             let { todo, desc, done} = sampledata[i];
             let todo1 = new TodoList({ _id:new ObjectId().toHexString(), users_id:_id, todo, desc, done })
