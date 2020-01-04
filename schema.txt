@@ -25,5 +25,5 @@ db.createCollection("tokens")
 db.createCollection("todolists")
 
 db.todolists.createIndex({ users_id: 1})
-db.todolists.createIndex({ updated: 1}, { expireAfterSeconds: 86400*60 })
+db.todolists.createIndex({ updated: 1}, { expireAfterSeconds: 86400*14 })
 
