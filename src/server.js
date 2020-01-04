@@ -4,8 +4,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import path from 'path';
 import fs from 'fs';
-//import rfs from 'rotating-file-stream';
 import routes from './routes';
+import { checkToken } from './authutil'
 
 const app = express();
 
@@ -32,7 +32,7 @@ const accessLogStream = rfs.createStream("access.log", {
 
 app.use(morgan('combined', {stream: accessLogStream}))
 
-app.set('port', (process.env.PORT || 8000));
+app.set('port', (process.env.PORT || 8082));
 
 app.use(express.static(baseDir + '/public'));
 console.log(baseDir + '/views');
@@ -49,6 +49,33 @@ app.use(function (req, res, next) {
     res.header('Expires', '-1');
     res.header('Pragma', 'no-cache');
     next()
+});
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/todolist') && !req.path.startsWith('/todolist_long')) {
+    next();
+    return;
+  } 
+  //console.log("## JWT Middleware!! : " + req.path)
+  let auth_header = req.headers.authorization;
+  if (auth_header) {
+      let [ name, token ] = auth_header.split(" ")
+      if (typeof(name) === "string" && name === "Bearer") {
+        checkToken(token, (jwtresult) => {
+          if (jwtresult.status === "success") {
+            req.users = jwtresult.users;
+            next()
+          } else {
+            res.json(jwtresult);
+          }
+        })
+      } else {
+        res.json({ status:"fail", message:"토큰의 형식이 올바르지 않습니다. Bearer Token 형식을 사용합니다." })
+      }
+  } else {
+      res.json({ status:"fail", message:"authorization 요청 헤더를 통해 토큰이 전달되지 않았습니다." })
+  }
+
 });
 
 routes(app);

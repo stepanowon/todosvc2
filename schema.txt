@@ -5,12 +5,12 @@ role : String
 password : String
 
 * todolists
-_id : ObjectID
+_id : ObjectID.ToHexString
 users_id : String
-todo_id : String(ObjectID-->ToString)
 todo : String
 desc : String
 done : Bool
+updated : Date
 
 
 
@@ -24,4 +24,6 @@ db.createCollection("users")
 db.createCollection("tokens")
 db.createCollection("todolists")
 
-db.users.createIndex({ users_id:1, todo_id: 1 }, { unique:true })
+db.todolists.createIndex({ users_id: 1})
+db.todolists.createIndex({ updated: 1}, { expireAfterSeconds: 86400*60 })
+

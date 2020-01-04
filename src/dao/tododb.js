@@ -16,19 +16,13 @@ const usersSchema = new mongoose.Schema({
     password: String
 })
 
-const tokensSchema =  new mongoose.Schema({
-    _id : String, 
-    users_id : String,
-    expire : { type: Date, default: Date.now },
-})
-
 const todolistsSchema = new mongoose.Schema({
-    _id : ObjectId,
+    _id : { type:String, default: new ObjectId().toHexString() },
     users_id : String,
-    todo_id : String,
     todo : String,
     desc : String,
     done : Boolean,
+    updated: { type: Date, default: Date.now },
 })
 
 if (!todolistsSchema.options.toObject) {
@@ -36,9 +30,10 @@ if (!todolistsSchema.options.toObject) {
 }
 
 todolistsSchema.set('toObject', {
-    transform: function (doc, ret) {
+    transform: (doc, ret) => {
       delete ret._id
       delete ret.__v
+      delete ret.updated;
     }
 })
 
