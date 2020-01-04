@@ -2,6 +2,12 @@
 * 할일 목록 서비스 using mongodb
 ---------------------------------------
 ## 실행 방법
+* mongodb 기동
+~~~
+예) dao/tododb.js의 설정을 적절하게 변경하세요.
+./bin/mongod --dbpath data/db --port 27017
+~~~
+
 * 의존성 설치
 ~~~
 npm install
@@ -22,5 +28,5 @@ npm run start
 
 ## 이미 설치된 버전을 확인하려면 다음 두곳에서 확인하셍.
 * https://todosvc2.herokuapp.com
-* http://sample.bmaster.kro.kr:8082
+
 

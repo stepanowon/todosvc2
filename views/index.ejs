@@ -29,25 +29,28 @@
                 <a href="#top" onclick=$("#menu-close").click();>todolist API v2.0</a>
             </li>
             <li>
-                <a href="#a1" onclick=$("#menu-close").click();>GET /todolist/:owner</a>
+                <a href="#a1" onclick=$("#menu-close").click();>POST /users/create</a>
             </li>
             <li>
-                <a href="#a2" onclick=$("#menu-close").click();>GET /todolist/:owner/:no</a>
+                <a href="#a2" onclick=$("#menu-close").click();>POST /login</a>
             </li>
             <li>
-                <a href="#a3" onclick=$("#menu-close").click();>POST /todolist/:owner</a>
+                <a href="#a3" onclick=$("#menu-close").click();>GET /todolist</a>
             </li>
             <li>
-                <a href="#a4" onclick=$("#menu-close").click();>PUT /todolist/:owner/:no</a>
+                <a href="#a4" onclick=$("#menu-close").click();>GET /todolist/:id</a>
             </li>
             <li>
-                <a href="#a5" onclick=$("#menu-close").click();>PUT /todolist/:owner/:no/done</a>
+                <a href="#a5" onclick=$("#menu-close").click();>POST /todolist</a>
             </li>
             <li>
-                <a href="#a6" onclick=$("#menu-close").click();>DELETE /todolist/:owner/:no</a>
+                <a href="#a6" onclick=$("#menu-close").click();>PUT /todolist/:id</a>
             </li>
             <li>
-                <a href="#a7" onclick=$("#menu-close").click();>GET /todolist/:owner/create</a>
+                <a href="#a7" onclick=$("#menu-close").click();>DELETE /todolist/:id</a>
+            </li>
+            <li>
+                <a href="#a8" onclick=$("#menu-close").click();>PUT /todolist/:id/done</a>
             </li>
         </ul>
     </nav>
@@ -73,7 +76,7 @@
     <aside  id="a1" class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                    <h3>1. GET /todolist/:owner</h3>
+                    <h3>1. POST /users/create</h3>
             </div>
         </div>
     </aside>
@@ -82,24 +85,28 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 할일 목록 조회 기능</p>
+                    <p>: 새로운 사용자 등록과 샘플용 todo 3개 등록</p>
                     <p class="lead">
-                        <div>- 전달 파라미터</div>
+                        <div>- POST 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자의 식별자(email 주소, 이름 등의 자신을 나타낼 수 있는 식별자)</li>
+                            <li>id : 사용자의 식별자로 사용할 email 주소</li>
+                            <li>username : 사용자의 이름</li>
+                            <li>password : 패스워드</li>
                         </ul>
                         <div>- 요청 형식</div>
-                        <ul>
-                            <li><a href="/todolist/gdhong">/todolist/gdhong</a></li>
-                        </ul>
+                        <pre>
+{
+    "id":"gdhong@test.com",
+    "username" : "홍길동",
+    "password" : "1234"
+}</pre>
                         <div>- 응답데이터 형식</div>
                         <pre>
-[
-    { "no":1572093093429,"todo":"야구장","desc":"프로야구 경기도 봐야합니다.","done":false},
-    { "no":1572093093428,"todo":"놀기","desc":"노는 것도 중요합니다.","done":false},
-    { "no":1572093093427,"todo":"Vue 학습","desc":"Vue 학습을 해야 합니다","done":false},
-    { "no":123456789,"todo":"ES6 공부","desc":"ES6공부를 해야 합니다","done":false}
-]</pre>
+{
+    "status": "success",
+    "message": "사용자 생성 성공",
+    "_id": "gdhong@test.com"
+}</pre>
                     </p>
                 </div>
             </div>
@@ -111,7 +118,7 @@
     <aside  id="a2" class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                    <h3>2. GET /todolist/:owner/:no</h3>
+                    <h3>2. POST /login</h3>
             </div>
         </div>
     </aside>
@@ -120,26 +127,27 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 특정 할일 정보 한건 조회</p>
+                    <p>: 로그인 처리</p>
                     <p class="lead">
-                        <div>- 전달 파라미터</div>
+                        <div>- POST 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자</li>
-                            <li>:no : 할일 목록 고유 번호</li>
+                            <li>id : id로 사용하는 email 주소</li>
+                            <li>password : 패스워드</li>
                         </ul>
                         <div>- 요청 형식</div>
-                        <ul>
-                            <li><a href="/todolist/gdhong/123456789">/contacts/123456789</a></li>
-                        </ul>
+                        <pre>
+{
+    "id":"gdhong@test.com",
+    "password" : "1234"
+}</pre>
                         <div>- 응답데이터 형식</div>
                         <pre>
 {
-    "no":123456789,
-    "todo":"ES6 공부",
-    "desc":"ES6 공부는 필수. 10.22까지."
-    "done":false
+    "status": "success",
+    "message": "로그인 성공",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vyc19pZCI6ImdkaG9uZzJAdGVzdC5jb20iLCJyb2xlIjoidXNlcnMiLCJpYXQiOjE1NzgxMjQxMTEsImV4cCI6MTU3ODcyODkxMX0.YJBMCjkpwReN2DPMFYhvba1CWtGUUF8Kw6p0h2xvmuQ"
 }</pre>
-                    </p>
+</p>
                 </div>
             </div>
             <!-- /.row -->
@@ -151,7 +159,7 @@
     <aside id="a3" class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                    <h3>3. POST /todolist/:owner</h3>
+                    <h3>3. GET /todolist</h3>
             </div>
         </div>
     </aside>
@@ -160,31 +168,26 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 새로운 할일을 목록에 추가</p>
+                    <p>: 사용자의 할일 목록 조회</p>
                     <p class="lead">
                         <div>- 전달 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자 고유 식별자</li>
-                            <li>name : 이름</li>
-                            <li>tel : 전화번호</li>
-                            <li>address : 주소</li>
+                            <li>Token : Authorization 요청 헤더로 전송해야 함. ex) Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX.... </li>
                         </ul>
-                        <div>- 요청 형식(conent-type:application/json)</div>
-                        <pre>
-{
-    "todo":"React학습",
-    "desc":"Redux까지 마무리! (10.23까지)"
-}</pre>
                         <div>- 응답데이터 형식(성공)</div>
                         <pre>
 {
     "status": "success",
-    "message": "추가 성공",
-    "item": {
-        "no": 1572093337388,
-        "todo": "React학습",
-        "desc": "Redux까지 마무리! (10.23까지)"
-    }
+    "todolist": [
+        {
+            "_id": "5e103eef5f0cf40017a61727",
+            "users_id": "gdhong2@test.com",
+            "todo": "ES6 공부",
+            "desc": "ES6공부를 해야 합니다",
+            "done": true
+        },
+        ......
+    ]
 }</pre>
                         <div>- 응답데이터 형식(실패)</div>
                         <pre>
@@ -203,7 +206,7 @@
     <aside  id="a4" class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                    <h3>4. PUT /todolist/:owner/:no</h3>
+                    <h3>4. GET /todolist/:id</h3>
             </div>
         </div>
     </aside>
@@ -213,33 +216,23 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 기존 한건의 할일 정보 변경</p>
+                    <p>: 특정한 한건의 todo 정보 조회</p>
                     <p class="lead">
                         <div>- 전달 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자 식별 정보</li>
-                            <li>:no : 할일 일련 번호</li>
-                            <li>todo : 할일</li>
-                            <li>desc : 할일에 대한 설명정보</li>
-                            <li>done : 완료여부</li>
+                            <li>Token : Authorization 요청 헤더로 전송해야 함. ex) Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX.... </li>
+                            <li>:id : Todo 한 건의 id</li>
                         </ul>
-                        <div>- 요청 형식(conent-type:application/json)</div>
-                        <pre>
-{ 
-    "todo" : "React학습!!",
-    "desc" : "Redux까지 마무리! (11.23까지)",
-    "done" : true
-}</pre>
                         <div>- 응답데이터 형식(성공)</div>
                         <pre>
 {
     "status": "success",
-    "message": "할일 변경 성공",
-    "item": {
-        "no": 1572093337388,
-        "todo": "React학습!!",
-        "desc": "Redux까지 마무리! (11.23까지)",
-        "done": true
+    "todo": {
+        "_id": "5e103eef5f0cf40017a61727",
+        "users_id": "gdhong2@test.com",
+        "todo": "ES6 공부",
+        "desc": "ES6공부를 해야 합니다",
+        "done": false
     }
 }</pre>
                         <div>- 응답데이터 형식(실패)</div>
@@ -259,7 +252,7 @@
     <aside id="a5" class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                    <h3>5. PUT /todolist/:owner/:no/done</h3>
+                    <h3>5. POST /todolist</h3>
             </div>
         </div>
     </aside>
@@ -268,26 +261,31 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 할일 한건에 대한 done값 토글 변경</p>
+                    <p>: 새로운 할일 추가</p>
                     <p class="lead">
                         <div>- 전달 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자 식별 정보</li>
-                            <li>:no : 할일 일련 번호</li>
+                            <li>Token : Authorization 요청 헤더로 전송해야 함. ex) Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX.... </li>
+                            <li>todo : Todo 할일명</li>
+                            <li>desc : 할일에 대한 설명</li>
                         </ul>
                         <div>- 요청 형식</div>
-                        <ul>
-                            <li>/todolist/gdhong/123456789/done</li>
-                        </ul>
+                        <pre>
+{
+    "todo":"디자인 시안 작성",
+    "desc" : "12.6까지 제품 디자인 시안 작성하여 개발팀에 전달"
+}</pre>
                         <div>- 응답데이터 형식(성공)</div>
                         <pre>
 {
     "status": "success",
-    "message": "완료 변경 성공",
-    "item": {
-        "no": 1572093337388,
-        "todo": "React학습!!",
-        "done": true
+    "message": "연락처 추가 성공",
+    "todo": {
+        "_id": "5e1046c25f0cf40017a6172c",
+        "users_id": "gdhong@test.com",
+        "todo":"디자인 시안 작성",
+        "desc" : "12.6까지 제품 디자인 시안 작성하여 개발팀에 전달",
+        "done": false
     }
 }</pre>
                         <div>- 응답데이터 형식(실패)</div>
@@ -307,7 +305,7 @@
     <aside id="a6"  class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                    <h3>6. DELETE /todolist/:owner/:no</h3>
+                    <h3>6. PUT /todolist/:id</h3>
             </div>
         </div>
     </aside>
@@ -316,22 +314,26 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 할일 한건 삭제</p>
+                    <p>: 할일 한 건 변경</p>
                     <p class="lead">
                         <div>- 전달 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자 식별 정보</li>
-                            <li>:no : 할일 일련 번호</li>
+                            <li>Token : Authorization 요청 헤더로 전송해야 함. ex) Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX.... </li>
+                            <li>:id : Todo 할일의 id</li>
                         </ul>
+                        <div>- 요청 형식</div>
+                        <pre>
+{
+    "todo":"디자인 시안 작성(11.10)",
+    "desc" : "12.6까지 제품 디자인 시안 작성하여 개발팀에 전달.-->12.5까지로 변경",
+    "done" : false
+}</pre>
                         <div>- 응답데이터 형식(성공)</div>
                         <pre>
 {
     "status": "success",
-    "message": "삭제 성공",
-    "item": {
-        "no": 1572093337388,
-        "todo": "React학습!!"
-    }
+    "message": "할일 업데이트 성공",
+    "_id": "5e103f6f5f0cf40017a6172b"
 }</pre>
                         <div>- 응답데이터 형식(실패)</div>
                         <pre>
@@ -351,7 +353,7 @@
     <aside  id="a7" class="call-to-action bg-primary">
         <div class="container">
             <div class="row">
-                <h3>7. GET /todolist/:owner/create</h3>
+                <h3>7. DELETE /todolist/:id</h3>
             </div>
         </div>
     </aside>
@@ -360,17 +362,60 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <p>: 새로운 owner를 위한 샘플 할일 3건 생성</p>
+                    <p>: 할일 한건의 삭제</p>
                     <p class="lead">
                         <div>- 전달 파라미터</div>
                         <ul>
-                            <li>:owner : 소유자</li>
+                            <li>Token : Authorization 요청 헤더로 전송해야 함. ex) Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX.... </li>
+                            <li>:id : Todo 한 건의 id</li>
                         </ul>
                         <div>- 응답데이터 형식</div>
                         <pre>
 {
     "status": "success",
-    "message": "샘플 데이터 생성 성공!"
+    "message": "할일 삭제 성공",
+    "_id": "5e103f6f5f0cf40017a6172b"
+}</pre>
+                        <div>- 응답데이터 형식(실패)</div>
+                        <pre>
+{
+"status": "fail",
+"message": "[에러메시지]"
+}</pre>
+                    </p>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container -->
+    </section>
+
+
+    <aside  id="a8" class="call-to-action bg-primary">
+        <div class="container">
+            <div class="row">
+                <h3>8. PUT /todolist/:id/done</h3>
+            </div>
+        </div>
+    </aside>
+
+    <section class="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-left">
+                    <p>: 할일 한건의 완료(done) 값을 toggle 함.</p>
+                    <p class="lead">
+                        <div>- 전달 파라미터</div>
+                        <ul>
+                            <li>Token : Authorization 요청 헤더로 전송해야 함. ex) Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX.... </li>
+                            <li>:id : Todo 한 건의 id</li>
+                        </ul>
+                        <div>- 응답데이터 형식</div>
+                        <pre>
+{
+    "status": "success",
+    "message": "할일 완료 처리 성공",
+    "_id": "5e103f6f5f0cf40017a6172b"
 }</pre>
                         <div>- 응답데이터 형식(실패)</div>
                         <pre>
