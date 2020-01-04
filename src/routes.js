@@ -8,7 +8,7 @@ export default (app) => {
         console.log("### GET /");
         res.render('index', {
              title: 'todolist 서비스 v2.0',
-             subtitle : '(node.js + express + lokijs)'
+             subtitle : '(node.js + express + mongodb + mongoose + jwt)'
         })
     });
 
