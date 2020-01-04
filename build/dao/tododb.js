@@ -38,18 +38,12 @@ const usersSchema = new _mongoose.default.Schema({
   password: String
 });
 const todolistsSchema = new _mongoose.default.Schema({
-  _id: {
-    type: String,
-    default: new _mongodb.ObjectId().toHexString()
-  },
+  _id: String,
   users_id: String,
   todo: String,
   desc: String,
   done: Boolean,
-  updated: {
-    type: Date,
-    default: Date.now
-  }
+  updated: Date
 });
 
 if (!todolistsSchema.options.toObject) {

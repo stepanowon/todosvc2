@@ -54,7 +54,8 @@ const createUser = async ({
         users_id: _id,
         todo,
         desc,
-        done
+        done,
+        updated: Date.now
       });
       todo1.save();
     }
@@ -215,10 +216,12 @@ const addTodo = async ({
 
     if (!desc || desc === "") desc = "설명 없음";
     let todoOne = new _tododb.TodoList({
+      _id: new _mongodb.ObjectId().toHexString(),
       users_id,
       todo,
       desc,
-      done: false
+      done: false,
+      updated: Date.now
     });
     todoOne.save();
     let {
