@@ -17,12 +17,12 @@ const usersSchema = new mongoose.Schema({
 })
 
 const todolistsSchema = new mongoose.Schema({
-    _id : { type:String, default: new ObjectId().toHexString() },
+    _id : String,
     users_id : String,
     todo : String,
     desc : String,
     done : Boolean,
-    updated: { type: Date, default: Date.now },
+    updated: Date,
 })
 
 if (!todolistsSchema.options.toObject) {

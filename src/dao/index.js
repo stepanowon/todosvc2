@@ -19,10 +19,10 @@ export const createUser = async ({ _id, username, password, role }) => {
             { todo:"Vue 학습", desc:"Vue 학습을 해야 합니다", done:false },
             { todo:"야구장", desc:"프로야구 경기도 봐야합니다.", done:false },
         ];
-        
+
         for (let i=0; i < sampledata.length; i++) {
             let { todo, desc, done} = sampledata[i];
-            let todo1 = new TodoList({ _id:new ObjectId().toHexString(), users_id:_id, todo, desc, done })
+            let todo1 = new TodoList({ _id:new ObjectId().toHexString(), users_id:_id, todo, desc, done, updated: Date.now })
             todo1.save();
         }
 
@@ -95,7 +95,7 @@ export const addTodo = async({ users_id, todo, desc }) => {
             throw new Error("users_id와 todo는 반드시 필요합니다.");
         }
         if (!desc || desc === "") desc = "설명 없음";
-        let todoOne = new TodoList({ users_id, todo, desc, done:false });
+        let todoOne = new TodoList({ _id:new ObjectId().toHexString(), users_id, todo, desc, done:false, updated: Date.now });
         todoOne.save()
         let { _id, done } = todoOne;
         return { status:"success", message:"연락처 추가 성공", todo: { _id, users_id, todo, desc, done } };
