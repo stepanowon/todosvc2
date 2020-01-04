@@ -55,7 +55,7 @@ const createUser = async ({
         todo,
         desc,
         done,
-        updated: Date.now
+        updated: Date.now()
       });
       todo1.save();
     }
@@ -221,7 +221,7 @@ const addTodo = async ({
       todo,
       desc,
       done: false,
-      updated: Date.now
+      updated: Date.now()
     });
     todoOne.save();
     let {
