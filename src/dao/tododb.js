@@ -7,37 +7,24 @@ if (!process.env.MONGODB_URI) {
 } else {
     uri = process.env.MONGODB_URI;
 }
-mongoose.connect(uri, { useNewUrlParser: true, poolSize:20, useUnifiedTopology:true  })
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true  })
 
 const usersSchema = new mongoose.Schema({
     _id : String, 
     username: String,
     role : String,
-    password: String
+    password: String,
+    created: { type:Date, default: ()=> Date.now() }
 })
 
 const todolistsSchema = new mongoose.Schema({
-    _id : String,
+    _id : { type:String, default: ()=> new ObjectId().toHexString() },
     users_id : String,
     todo : String,
     desc : String,
     done : Boolean,
-    updated: Date,
+    created: { type:Date, default: ()=> Date.now() }
 })
-
-if (!todolistsSchema.options.toObject) {
-    todolistsSchema.options.toObject = {};
-}
-
-todolistsSchema.set('toObject', {
-    transform: (doc, ret) => {
-      delete ret._id
-      delete ret.__v
-      delete ret.updated;
-    }
-})
-
-todolistsSchema.index({ tokens_id:1, todo_id:1 }, { unique:true })
 
 const User = mongoose.model("users", usersSchema);
 const TodoList = mongoose.model("todolists", todolistsSchema);

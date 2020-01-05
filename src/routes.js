@@ -1,5 +1,5 @@
 import { createUser, findUser , getTodoList, getTodoOne, addTodo, updateTodo, deleteTodo, toggleDone } from './dao';
-import sleep from 'system-sleep';
+import sleep from 'sleep-promise';
 import { createToken, checkToken, computeHMAC } from './authutil';
 
 export default (app) => { 
@@ -41,7 +41,7 @@ export default (app) => {
      })
 
     app.get('/todolist_long', async (req,res)=> {
-        sleep(1000);
+        await sleep(1000);
         console.log("### GET /todolist : " + req.users.users_id);
         let users_id = req.users.users_id;
         let response = await getTodoList({ users_id });
@@ -59,6 +59,7 @@ export default (app) => {
 
     app.get('/todolist_long/:id', async(req, res) => {
         console.log("### GET /todolist_long/:id : " + req.users.users_id);
+        await sleep(1000);
         let users_id = req.users.users_id;
         let _id = req.params.id;
 
@@ -76,6 +77,7 @@ export default (app) => {
 
     app.post('/todolist_long', async(req,res) => {
         console.log("### POST /todolist : " + req.users.users_id);
+        await sleep(1000);
         let users_id = req.users.users_id;
         let { todo, desc } = req.body;
         let response = await addTodo({ users_id, todo, desc })
@@ -93,7 +95,7 @@ export default (app) => {
 
     app.put('/todolist_long/:id', async(req,res)=> {
         console.log("### PUT /todolist_long/:id : " + req.users.users_id);
-        sleep(1000);
+        await sleep(1000);
         let users_id = req.users.users_id;
         let _id = req.params.id;
         let { todo, desc, done } = req.body;
@@ -111,7 +113,7 @@ export default (app) => {
     
     app.delete('/todolist_long/:id', async(req, res)=> {
         console.log("### PUT /todolist_long/:id : " + req.users.users_id);
-        sleep(1000);
+        await sleep(1000);
         let users_id = req.users.users_id;
         let _id = req.params.id;
         let response = await deleteTodo({ users_id, _id });
@@ -128,7 +130,7 @@ export default (app) => {
 
     app.put('/todolist_long/:id/done', async(req, res)=> {
         console.log("### PUT /todolist/:id/done : " + req.users.users_id);
-        sleep(1000);
+        await sleep(1000);
         let users_id = req.users.users_id;
         let _id = req.params.id;
         let response = await toggleDone({ users_id, _id });
