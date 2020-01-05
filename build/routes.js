@@ -7,7 +7,7 @@ exports.default = void 0;
 
 var _dao = require("./dao");
 
-var _systemSleep = _interopRequireDefault(require("system-sleep"));
+var _sleepPromise = _interopRequireDefault(require("sleep-promise"));
 
 var _authutil = require("./authutil");
 
@@ -72,7 +72,7 @@ var _default = app => {
     res.json(response);
   });
   app.get('/todolist_long', async (req, res) => {
-    (0, _systemSleep.default)(1000);
+    await (0, _sleepPromise.default)(1000);
     console.log("### GET /todolist : " + req.users.users_id);
     let users_id = req.users.users_id;
     let response = await (0, _dao.getTodoList)({
@@ -92,6 +92,7 @@ var _default = app => {
   });
   app.get('/todolist_long/:id', async (req, res) => {
     console.log("### GET /todolist_long/:id : " + req.users.users_id);
+    await (0, _sleepPromise.default)(1000);
     let users_id = req.users.users_id;
     let _id = req.params.id;
     let response = await (0, _dao.getTodoOne)({
@@ -116,6 +117,7 @@ var _default = app => {
   });
   app.post('/todolist_long', async (req, res) => {
     console.log("### POST /todolist : " + req.users.users_id);
+    await (0, _sleepPromise.default)(1000);
     let users_id = req.users.users_id;
     let {
       todo,
@@ -148,7 +150,7 @@ var _default = app => {
   });
   app.put('/todolist_long/:id', async (req, res) => {
     console.log("### PUT /todolist_long/:id : " + req.users.users_id);
-    (0, _systemSleep.default)(1000);
+    await (0, _sleepPromise.default)(1000);
     let users_id = req.users.users_id;
     let _id = req.params.id;
     let {
@@ -177,7 +179,7 @@ var _default = app => {
   });
   app.delete('/todolist_long/:id', async (req, res) => {
     console.log("### PUT /todolist_long/:id : " + req.users.users_id);
-    (0, _systemSleep.default)(1000);
+    await (0, _sleepPromise.default)(1000);
     let users_id = req.users.users_id;
     let _id = req.params.id;
     let response = await (0, _dao.deleteTodo)({
@@ -198,7 +200,7 @@ var _default = app => {
   });
   app.put('/todolist_long/:id/done', async (req, res) => {
     console.log("### PUT /todolist/:id/done : " + req.users.users_id);
-    (0, _systemSleep.default)(1000);
+    await (0, _sleepPromise.default)(1000);
     let users_id = req.users.users_id;
     let _id = req.params.id;
     let response = await (0, _dao.toggleDone)({

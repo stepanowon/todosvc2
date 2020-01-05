@@ -27,7 +27,6 @@ if (!process.env.MONGODB_URI) {
 
 _mongoose.default.connect(uri, {
   useNewUrlParser: true,
-  poolSize: 20,
   useUnifiedTopology: true
 });
 
@@ -35,33 +34,25 @@ const usersSchema = new _mongoose.default.Schema({
   _id: String,
   username: String,
   role: String,
-  password: String
+  password: String,
+  created: {
+    type: Date,
+    default: () => Date.now()
+  }
 });
 const todolistsSchema = new _mongoose.default.Schema({
-  _id: String,
+  _id: {
+    type: String,
+    default: () => new _mongodb.ObjectId().toHexString()
+  },
   users_id: String,
   todo: String,
   desc: String,
   done: Boolean,
-  updated: Date
-});
-
-if (!todolistsSchema.options.toObject) {
-  todolistsSchema.options.toObject = {};
-}
-
-todolistsSchema.set('toObject', {
-  transform: (doc, ret) => {
-    delete ret._id;
-    delete ret.__v;
-    delete ret.updated;
+  created: {
+    type: Date,
+    default: () => Date.now()
   }
-});
-todolistsSchema.index({
-  tokens_id: 1,
-  todo_id: 1
-}, {
-  unique: true
 });
 
 const User = _mongoose.default.model("users", usersSchema);

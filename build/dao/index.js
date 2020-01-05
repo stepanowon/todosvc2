@@ -50,12 +50,10 @@ const createUser = async ({
         done
       } = sampledata[i];
       let todo1 = new _tododb.TodoList({
-        _id: new _mongodb.ObjectId().toHexString(),
         users_id: _id,
         todo,
         desc,
-        done,
-        updated: Date.now()
+        done
       });
       todo1.save();
     }
@@ -133,7 +131,7 @@ const getTodoList = async ({
         done
       } = t;
       return {
-        _id,
+        id: _id,
         users_id,
         todo,
         desc,
@@ -181,7 +179,7 @@ const getTodoOne = async ({
       return {
         status: "success",
         todo: {
-          _id,
+          id: _id,
           users_id,
           todo,
           desc,
@@ -216,12 +214,10 @@ const addTodo = async ({
 
     if (!desc || desc === "") desc = "설명 없음";
     let todoOne = new _tododb.TodoList({
-      _id: new _mongodb.ObjectId().toHexString(),
       users_id,
       todo,
       desc,
-      done: false,
-      updated: Date.now()
+      done: false
     });
     todoOne.save();
     let {
@@ -232,7 +228,7 @@ const addTodo = async ({
       status: "success",
       message: "연락처 추가 성공",
       todo: {
-        _id,
+        id: _id,
         users_id,
         todo,
         desc,
