@@ -23,7 +23,7 @@ db.todolists.drop()
 db.createCollection("users")
 db.createCollection("todolists")
 
-db.users.createIndex({ created:1 }, { expireAfterSeconds : 86400 * 30 })
+db.users.createIndex({ created:1 }, { expireAfterSeconds : 86400 * 14 })
 db.todolists.createIndex({ users_id: 1})
 db.todolists.createIndex({ created: 1}, { expireAfterSeconds: 86400*14 })
 
