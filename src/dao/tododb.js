@@ -14,7 +14,7 @@ const usersSchema = new mongoose.Schema({
     username: String,
     role : String,
     password: String,
-    created: { type:Date, default: ()=> Date.now() }
+    created: { type:Date, default: ()=> Date.now() } 
 })
 
 const todolistsSchema = new mongoose.Schema({
