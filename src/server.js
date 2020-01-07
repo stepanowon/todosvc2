@@ -51,6 +51,7 @@ app.use(function (req, res, next) {
     next()
 });
 
+//권한 검증용 MW
 app.use((req, res, next) => {
   if (!req.path.startsWith('/todolist') && !req.path.startsWith('/todolist_long')) {
     next();

@@ -24,7 +24,7 @@ const checkToken = (token, callback) => {
             const exp = new Date(decode.exp * 1000)
             const now = Date.now()
             if (exp < now) {
-              callback({ status:"fail", message: "유효기간이 지나 파기된 토큰입니다" })
+              callback({ status:"fail", message: "expired token" })
             } else {
               callback({ status:"success", users: decode})
             }
