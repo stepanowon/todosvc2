@@ -31,7 +31,7 @@ export const createUser = async ({ _id, username, password, role }) => {
         else
             return { status: "fail", message:"사용자 생성 실패" };
     } catch(e) {
-        return { status: "fail", message: "사용자 생성 실패" };
+        return { status: "fail", message: "사용자 생성 실패! 이미 존재하는 사용자 입니다." };
     }
 }
 
