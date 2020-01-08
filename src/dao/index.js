@@ -8,9 +8,13 @@ export const createUser = async ({ _id, username, password, role }) => {
             typeof(password) !== "string" || password === "" ) {
             throw new Error("Email 주소와 사용자명, 암호를 정확하게 입력하세요");
         }
+        let userOne = User.findOne({ _id })
+        if (userOne) {
+            throw new Error("이미 존재하는 사용자입니다.")
+        }
 
         //사용자 계정 생성
-         let userOne = new User({ _id, username, password, role })
+        userOne = new User({ _id, username, password, role })
         let doc = await userOne.save()
         
         //샘플 todolist 데이터 입력
@@ -31,7 +35,7 @@ export const createUser = async ({ _id, username, password, role }) => {
         else
             return { status: "fail", message:"사용자 생성 실패" };
     } catch(e) {
-        return { status: "fail", message: "사용자 생성 실패! 이미 존재하는 사용자 입니다." };
+        return { status: "fail", message: e.message };
     }
 }
 
