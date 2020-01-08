@@ -7,6 +7,7 @@ if (!process.env.MONGODB_URI) {
 } else {
     uri = process.env.MONGODB_URI;
 }
+console.log(uri)
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology:true  })
 
 const usersSchema = new mongoose.Schema({

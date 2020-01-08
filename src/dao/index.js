@@ -8,13 +8,13 @@ export const createUser = async ({ _id, username, password, role }) => {
             typeof(password) !== "string" || password === "" ) {
             throw new Error("Email 주소와 사용자명, 암호를 정확하게 입력하세요");
         }
-        let userOne = User.findOne({ _id })
-        if (userOne) {
+        let cnt = await User.countDocuments({ _id })
+        if (cnt > 0) {
             throw new Error("이미 존재하는 사용자입니다.")
         }
 
         //사용자 계정 생성
-        userOne = new User({ _id, username, password, role })
+        let userOne = new User({ _id, username, password, role })
         let doc = await userOne.save()
         
         //샘플 todolist 데이터 입력
