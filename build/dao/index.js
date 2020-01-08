@@ -18,6 +18,14 @@ const createUser = async ({
   try {
     if (typeof _id !== "string" || _id === "" || typeof username !== "string" || username === "" || typeof password !== "string" || password === "") {
       throw new Error("Email 주소와 사용자명, 암호를 정확하게 입력하세요");
+    }
+
+    let cnt = await _tododb.User.countDocuments({
+      _id
+    });
+
+    if (cnt > 0) {
+      throw new Error("이미 존재하는 사용자입니다.");
     } //사용자 계정 생성
 
 

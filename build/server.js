@@ -57,7 +57,8 @@ app.use(function (req, res, next) {
   res.header('Expires', '-1');
   res.header('Pragma', 'no-cache');
   next();
-});
+}); //권한 검증용 MW
+
 app.use((req, res, next) => {
   if (!req.path.startsWith('/todolist') && !req.path.startsWith('/todolist_long')) {
     next();
