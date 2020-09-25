@@ -34,7 +34,10 @@ const createToken = ({
 
 exports.createToken = createToken;
 
-const checkToken = (token, callback) => {
+const checkToken = ({
+  token,
+  callback
+}) => {
   _jsonwebtoken.default.verify(token, secretKey, {
     algorithms: ['HS256']
   }, (err, decode) => {

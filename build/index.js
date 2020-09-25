@@ -72,12 +72,15 @@ app.use((req, res, next) => {
     let [name, token] = auth_header.split(" ");
 
     if (typeof name === "string" && name === "Bearer") {
-      (0, _authutil.checkToken)(token, jwtresult => {
-        if (jwtresult.status === "success") {
-          req.users = jwtresult.users;
-          next();
-        } else {
-          res.json(jwtresult);
+      (0, _authutil.checkToken)({
+        token,
+        callback: jwtresult => {
+          if (jwtresult.status === "success") {
+            req.users = jwtresult.users;
+            next();
+          } else {
+            res.json(jwtresult);
+          }
         }
       });
     } else {
