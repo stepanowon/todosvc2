@@ -16,7 +16,7 @@ const createToken = ({ users_id, role }) => {
     return token;
 }
 
-const checkToken = (token, callback) => {
+const checkToken = ({ token, callback }) => {
     jwt.verify(token, secretKey, { algorithms: ['HS256'] }, (err, decode) => { 
         if (err) {
             callback({status: "fail", message:err })

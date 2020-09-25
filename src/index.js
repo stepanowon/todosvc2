@@ -62,14 +62,14 @@ app.use((req, res, next) => {
   if (auth_header) {
       let [ name, token ] = auth_header.split(" ")
       if (typeof(name) === "string" && name === "Bearer") {
-        checkToken(token, (jwtresult) => {
+        checkToken({ token, callback: (jwtresult) => {
           if (jwtresult.status === "success") {
             req.users = jwtresult.users;
             next()
           } else {
             res.json(jwtresult);
           }
-        })
+        }})
       } else {
         res.json({ status:"fail", message:"토큰의 형식이 올바르지 않습니다. Bearer Token 형식을 사용합니다." })
       }

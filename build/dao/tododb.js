@@ -25,6 +25,8 @@ if (!process.env.MONGODB_URI) {
   uri = process.env.MONGODB_URI;
 }
 
+console.log(uri);
+
 _mongoose.default.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
