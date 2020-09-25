@@ -69,7 +69,7 @@ const createUser = async ({
   } catch (e) {
     return {
       status: "fail",
-      message: e.message
+      message: "사용자 생성 실패! 이미 존재하는 사용자 입니다."
     };
   }
 };

@@ -50,7 +50,7 @@ const checkToken = (token, callback) => {
       if (exp < now) {
         callback({
           status: "fail",
-          message: "유효기간이 지나 파기된 토큰입니다"
+          message: "expired token"
         });
       } else {
         callback({
