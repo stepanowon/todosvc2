@@ -4,15 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-
 var _dao = require("./dao");
-
 var _sleepPromise = _interopRequireDefault(require("sleep-promise"));
-
 var _authutil = require("./authutil");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 var _default = app => {
   app.get('/', (req, res) => {
     console.log("### GET /");
@@ -48,7 +43,6 @@ var _default = app => {
       _id: id,
       password
     });
-
     if (doc && doc.status === "success") {
       let token = (0, _authutil.createToken)({
         users_id: doc._id,
@@ -208,8 +202,9 @@ var _default = app => {
       _id
     });
     res.json(response);
-  }); //----에러 처리 시작
+  });
 
+  //----에러 처리 시작
   app.get('*', (req, res, next) => {
     var err = new Error();
     err.status = 404;
@@ -217,7 +212,6 @@ var _default = app => {
   });
   app.use((err, req, res, next) => {
     console.log("### ERROR!!");
-
     if (err.status === 404) {
       res.status(404).json({
         status: 404,
@@ -236,5 +230,4 @@ var _default = app => {
     }
   });
 };
-
 exports.default = _default;

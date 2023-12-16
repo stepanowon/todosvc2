@@ -1,23 +1,14 @@
 "use strict";
 
 var _express = _interopRequireDefault(require("express"));
-
 var _bodyParser = _interopRequireDefault(require("body-parser"));
-
 var _cors = _interopRequireDefault(require("cors"));
-
 var _morgan = _interopRequireDefault(require("morgan"));
-
 var _path = _interopRequireDefault(require("path"));
-
 var _fs = _interopRequireDefault(require("fs"));
-
 var _routes = _interopRequireDefault(require("./routes"));
-
 var _authutil = require("./authutil");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 const app = (0, _express.default)();
 app.use((0, _cors.default)());
 app.use(function (req, res, next) {
@@ -25,14 +16,12 @@ app.use(function (req, res, next) {
   res.header('Expires', '-1');
   res.header('Pragma', 'no-cache');
   next();
-}); //-- 로깅
+});
 
+//-- 로깅
 var baseDir = _path.default.resolve('.');
-
 const rfs = require("rotating-file-stream");
-
 const logDirectory = _path.default.join(baseDir, '/log');
-
 _fs.default.existsSync(logDirectory) || _fs.default.mkdirSync(logDirectory);
 const accessLogStream = rfs.createStream("access.log", {
   size: "10M",
@@ -57,20 +46,18 @@ app.use(function (req, res, next) {
   res.header('Expires', '-1');
   res.header('Pragma', 'no-cache');
   next();
-}); //권한 검증용 MW
+});
 
+//권한 검증용 MW
 app.use((req, res, next) => {
   if (!req.path.startsWith('/todolist') && !req.path.startsWith('/todolist_long')) {
     next();
     return;
-  } //console.log("## JWT Middleware!! : " + req.path)
-
-
+  }
+  //console.log("## JWT Middleware!! : " + req.path)
   let auth_header = req.headers.authorization;
-
   if (auth_header) {
     let [name, token] = auth_header.split(" ");
-
     if (typeof name === "string" && name === "Bearer") {
       (0, _authutil.checkToken)({
         token,
