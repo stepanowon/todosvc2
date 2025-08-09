@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
+import dotenv from "dotenv";
+dotenv.config();
 
 let uri;
 if (!process.env.MONGODB_URI) {
