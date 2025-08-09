@@ -1,14 +1,19 @@
 "use strict";
 
 var _express = _interopRequireDefault(require("express"));
-var _bodyParser = _interopRequireDefault(require("body-parser"));
 var _cors = _interopRequireDefault(require("cors"));
 var _morgan = _interopRequireDefault(require("morgan"));
 var _path = _interopRequireDefault(require("path"));
 var _fs = _interopRequireDefault(require("fs"));
-var _routes = _interopRequireDefault(require("./routes"));
-var _authutil = require("./authutil");
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _url = require("url");
+var _rotatingFileStream = require("rotating-file-stream");
+var _ejs = _interopRequireDefault(require("ejs"));
+var _routes = _interopRequireDefault(require("./routes.js"));
+var _authutil = require("./authutil.js");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+// ES module equivalents for __dirname
+const _filename = (0, _url.fileURLToPath)(import.meta.url);
+const _dirname = _path.default.dirname(_filename);
 const app = (0, _express.default)();
 app.use((0, _cors.default)());
 app.use(function (req, res, next) {
@@ -19,11 +24,10 @@ app.use(function (req, res, next) {
 });
 
 //-- 로깅
-var baseDir = _path.default.resolve('.');
-const rfs = require("rotating-file-stream");
+const baseDir = _path.default.resolve('.');
 const logDirectory = _path.default.join(baseDir, '/log');
 _fs.default.existsSync(logDirectory) || _fs.default.mkdirSync(logDirectory);
-const accessLogStream = rfs.createStream("access.log", {
+const accessLogStream = (0, _rotatingFileStream.createStream)("access.log", {
   size: "10M",
   interval: "1d",
   path: logDirectory
@@ -36,9 +40,9 @@ app.use(_express.default.static(baseDir + '/public'));
 console.log(baseDir + '/views');
 app.set('views', baseDir + '/views');
 app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
-app.use(_bodyParser.default.json());
-app.use(_bodyParser.default.urlencoded({
+app.engine('html', _ejs.default.renderFile);
+app.use(_express.default.json());
+app.use(_express.default.urlencoded({
   extended: true
 }));
 app.use(function (req, res, next) {

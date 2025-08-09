@@ -12,7 +12,7 @@ Object.defineProperty(exports, "mongoose", {
 });
 var _mongoose = _interopRequireDefault(require("mongoose"));
 var _mongodb = require("mongodb");
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 let uri;
 if (!process.env.MONGODB_URI) {
   uri = "mongodb://localhost:27017/tododb";

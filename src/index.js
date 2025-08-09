@@ -1,11 +1,17 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import morgan from 'morgan';
 import path from 'path';
 import fs from 'fs';
-import routes from './routes';
-import { checkToken } from './authutil'
+import { fileURLToPath } from 'url';
+import { createStream } from 'rotating-file-stream';
+import ejs from 'ejs';
+import routes from './routes.js';
+import { checkToken } from './authutil.js'
+
+// ES module equivalents for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -19,12 +25,11 @@ app.use(function (req, res, next) {
 });
 
 //-- 로깅
-var baseDir = path.resolve('.');
+const baseDir = path.resolve('.');
 
-const rfs = require("rotating-file-stream");
 const logDirectory = path.join(baseDir, '/log')
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory)
-const accessLogStream = rfs.createStream("access.log", {
+const accessLogStream = createStream("access.log", {
   size: "10M",
   interval: "1d",
   path: logDirectory
@@ -38,9 +43,9 @@ app.use(express.static(baseDir + '/public'));
 console.log(baseDir + '/views');
 app.set('views', baseDir + '/views');
 app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
+app.engine('html', ejs.renderFile);
+app.use(express.json());
+app.use(express.urlencoded({
   extended: true
 }));
 

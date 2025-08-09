@@ -1,9 +1,20 @@
 import jwt from 'jsonwebtoken'
-import { createHash } from 'crypto'
+import { createHash, randomBytes } from 'crypto'
 
-let secretKey = "mysecretkey";
+// Generate secure secret key if not provided
+const generateSecretKey = () => {
+    return randomBytes(32).toString('hex');
+};
+
+let secretKey;
 if (process.env.JWT_SECRET_KEY) {
     secretKey = process.env.JWT_SECRET_KEY;
+} else if (process.env.NODE_ENV === 'production') {
+    console.error('SECURITY WARNING: JWT_SECRET_KEY environment variable is required in production!');
+    process.exit(1);
+} else {
+    console.warn('WARNING: Using generated secret key for development. Set JWT_SECRET_KEY in production!');
+    secretKey = generateSecretKey();
 }
 
 const createToken = ({ users_id, role }) => {
@@ -33,7 +44,53 @@ const checkToken = ({ token, callback }) => {
 }
 
 const computeHMAC = (id, password) => {
-    return createHash('sha256').update(id + password).digest('hex');
+    // Add salt for better security
+    const salt = process.env.PASSWORD_SALT || 'default_salt_change_in_production';
+    return createHash('sha256').update(id + password + salt).digest('hex');
 } 
 
-export { createToken, checkToken, computeHMAC };
+// Input validation utilities
+const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
+const validatePassword = (password) => {
+    // At least 6 characters
+    return typeof password === 'string' && password.length >= 6;
+};
+
+const validateUsername = (username) => {
+    // 2-50 characters, no special characters except spaces
+    return typeof username === 'string' && 
+           username.length >= 2 && 
+           username.length <= 50 &&
+           /^[a-zA-Z0-9\sㄱ-ㅎㅏ-ㅣ가-힣]+$/.test(username);
+};
+
+const validateTodo = (todo) => {
+    return typeof todo === 'string' && 
+           todo.trim().length >= 1 && 
+           todo.length <= 200;
+};
+
+const validateDescription = (desc) => {
+    return typeof desc === 'string' && desc.length <= 1000;
+};
+
+const sanitizeString = (str) => {
+    if (typeof str !== 'string') return '';
+    return str.trim().replace(/[<>]/g, '');
+};
+
+export { 
+    createToken, 
+    checkToken, 
+    computeHMAC, 
+    validateEmail, 
+    validatePassword, 
+    validateUsername, 
+    validateTodo, 
+    validateDescription,
+    sanitizeString 
+};

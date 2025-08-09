@@ -5,7 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.updateTodo = exports.toggleDone = exports.getTodoOne = exports.getTodoList = exports.findUser = exports.deleteTodo = exports.createUser = exports.addTodo = void 0;
 var _mongodb = require("mongodb");
-var _tododb = require("./tododb");
+var _tododb = require("./tododb.js");
+var _authutil = require("../authutil.js");
 const createUser = async ({
   _id,
   username,
@@ -13,9 +14,22 @@ const createUser = async ({
   role
 }) => {
   try {
-    if (typeof _id !== "string" || _id === "" || typeof username !== "string" || username === "" || typeof password !== "string" || password === "") {
-      throw new Error("Email 주소와 사용자명, 암호를 정확하게 입력하세요");
+    // Enhanced validation using imported validators
+    if (!_id || !(0, _authutil.validateEmail)(_id)) {
+      throw new Error("유효한 이메일 주소를 입력하세요");
     }
+    if (!username || !(0, _authutil.validateUsername)(username)) {
+      throw new Error("사용자명은 2-50자이며 영문, 숫자, 공백, 한글만 허용됩니다");
+    }
+    if (!password || typeof password !== "string" || password === "") {
+      throw new Error("비밀번호를 입력하세요");
+    }
+
+    // Sanitize inputs
+    _id = (0, _authutil.sanitizeString)(_id.toLowerCase()); // normalize email
+    username = (0, _authutil.sanitizeString)(username);
+    role = role || "users"; // default role
+
     let cnt = await _tododb.User.countDocuments({
       _id
     });
@@ -81,9 +95,15 @@ const findUser = async ({
   password
 }) => {
   try {
-    if (typeof _id !== "string" || _id === "" || typeof password !== "string" || password === "") {
-      throw new Error("_id와 암호를 정확하게 입력하세요");
+    if (!_id || !(0, _authutil.validateEmail)(_id)) {
+      throw new Error("유효한 이메일 주소를 입력하세요");
     }
+    if (!password || typeof password !== "string" || password === "") {
+      throw new Error("비밀번호를 입력하세요");
+    }
+
+    // Sanitize and normalize email
+    _id = (0, _authutil.sanitizeString)(_id.toLowerCase());
     let doc = await _tododb.User.findOne({
       _id,
       password
@@ -197,24 +217,38 @@ const addTodo = async ({
   desc
 }) => {
   try {
-    if (typeof users_id !== "string" || users_id === "" || typeof todo !== "string" || todo === "") {
-      throw new Error("users_id와 todo는 반드시 필요합니다.");
+    if (!users_id || !(0, _authutil.validateEmail)(users_id)) {
+      throw new Error("유효한 사용자 ID가 필요합니다.");
     }
-    if (!desc || desc === "") desc = "설명 없음";
+    if (!todo || !(0, _authutil.validateTodo)(todo)) {
+      throw new Error("할일은 1-200자 사이여야 합니다.");
+    }
+
+    // Sanitize inputs
+    users_id = (0, _authutil.sanitizeString)(users_id.toLowerCase());
+    todo = (0, _authutil.sanitizeString)(todo);
+    if (desc) {
+      if (!(0, _authutil.validateDescription)(desc)) {
+        throw new Error("설명은 1000자 이하여야 합니다.");
+      }
+      desc = (0, _authutil.sanitizeString)(desc);
+    } else {
+      desc = "설명 없음";
+    }
     let todoOne = new _tododb.TodoList({
       users_id,
       todo,
       desc,
       done: false
     });
-    todoOne.save();
+    await todoOne.save();
     let {
       _id,
       done
     } = todoOne;
     return {
       status: "success",
-      message: "연락처 추가 성공",
+      message: "할일 추가 성공",
       todo: {
         id: _id,
         users_id,
@@ -239,10 +273,31 @@ const updateTodo = async ({
   done
 }) => {
   try {
-    if (typeof users_id !== "string" || users_id === "" || typeof _id !== "string" || _id === "" || typeof todo !== "string" || todo === "" || typeof done !== "boolean") {
-      throw new Error("users_id, _id, todo, done은 반드시 필요합니다.");
+    if (!users_id || !(0, _authutil.validateEmail)(users_id)) {
+      throw new Error("유효한 사용자 ID가 필요합니다.");
     }
-    if (!desc || desc === "") desc = "설명 없음";
+    if (!_id || typeof _id !== "string" || _id.trim() === "") {
+      throw new Error("유효한 할일 ID가 필요합니다.");
+    }
+    if (!todo || !(0, _authutil.validateTodo)(todo)) {
+      throw new Error("할일은 1-200자 사이여야 합니다.");
+    }
+    if (typeof done !== "boolean") {
+      throw new Error("완료 상태는 true 또는 false여야 합니다.");
+    }
+
+    // Sanitize inputs
+    users_id = (0, _authutil.sanitizeString)(users_id.toLowerCase());
+    _id = (0, _authutil.sanitizeString)(_id);
+    todo = (0, _authutil.sanitizeString)(todo);
+    if (desc) {
+      if (!(0, _authutil.validateDescription)(desc)) {
+        throw new Error("설명은 1000자 이하여야 합니다.");
+      }
+      desc = (0, _authutil.sanitizeString)(desc);
+    } else {
+      desc = "설명 없음";
+    }
     let result = await _tododb.TodoList.updateOne({
       _id,
       users_id
@@ -251,7 +306,7 @@ const updateTodo = async ({
       desc,
       done
     });
-    if (result.ok === 1 && result.nModified === 1) {
+    if (result.matchedCount === 1) {
       return {
         status: "success",
         message: "할일 업데이트 성공",
@@ -260,8 +315,7 @@ const updateTodo = async ({
     } else {
       return {
         status: "fail",
-        message: "할일 업데이트 실패",
-        result
+        message: "할일을 찾을 수 없거나 권한이 없습니다."
       };
     }
   } catch (e) {
@@ -277,18 +331,32 @@ const deleteTodo = async ({
   _id
 }) => {
   try {
-    if (typeof users_id !== "string" || users_id === "" || typeof _id !== "string" || _id === "") {
-      throw new Error("users_id와 _id는 반드시 필요합니다.");
+    if (!users_id || !(0, _authutil.validateEmail)(users_id)) {
+      throw new Error("유효한 사용자 ID가 필요합니다.");
     }
-    await _tododb.TodoList.deleteOne({
+    if (!_id || typeof _id !== "string" || _id.trim() === "") {
+      throw new Error("유효한 할일 ID가 필요합니다.");
+    }
+
+    // Sanitize inputs
+    users_id = (0, _authutil.sanitizeString)(users_id.toLowerCase());
+    _id = (0, _authutil.sanitizeString)(_id);
+    let result = await _tododb.TodoList.deleteOne({
       _id,
       users_id
     });
-    return {
-      status: "success",
-      message: "할일 삭제 성공",
-      _id: _id
-    };
+    if (result.deletedCount === 1) {
+      return {
+        status: "success",
+        message: "할일 삭제 성공",
+        _id: _id
+      };
+    } else {
+      return {
+        status: "fail",
+        message: "할일을 찾을 수 없거나 권한이 없습니다."
+      };
+    }
   } catch (e) {
     return {
       status: "fail",
@@ -302,13 +370,26 @@ const toggleDone = async ({
   _id
 }) => {
   try {
-    if (typeof users_id !== "string" || users_id === "" || typeof _id !== "string" || _id === "") {
-      throw new Error("users_id와 _id는 반드시 필요합니다.");
+    if (!users_id || !(0, _authutil.validateEmail)(users_id)) {
+      throw new Error("유효한 사용자 ID가 필요합니다.");
     }
+    if (!_id || typeof _id !== "string" || _id.trim() === "") {
+      throw new Error("유효한 할일 ID가 필요합니다.");
+    }
+
+    // Sanitize inputs
+    users_id = (0, _authutil.sanitizeString)(users_id.toLowerCase());
+    _id = (0, _authutil.sanitizeString)(_id);
     let doc = await _tododb.TodoList.findOne({
       _id,
       users_id
     });
+    if (!doc) {
+      return {
+        status: "fail",
+        message: "할일을 찾을 수 없거나 권한이 없습니다."
+      };
+    }
     let done = !doc.done;
     let result = await _tododb.TodoList.updateOne({
       _id,
@@ -316,7 +397,7 @@ const toggleDone = async ({
     }, {
       done
     });
-    if (result.ok === 1 && result.nModified === 1) {
+    if (result.matchedCount === 1) {
       return {
         status: "success",
         message: "할일 완료 처리 성공",
@@ -325,8 +406,7 @@ const toggleDone = async ({
     } else {
       return {
         status: "fail",
-        message: "할일 완료 처리 실패",
-        result
+        message: "할일 완료 처리 실패"
       };
     }
   } catch (e) {
