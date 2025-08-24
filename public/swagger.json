@@ -11,7 +11,7 @@
   },
   "host": "todosvc2.bmaster.kro.kr",
   "basePath": "/",
-  "schemes": ["http", "https"],
+  "schemes": ["https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "securityDefinitions": {
