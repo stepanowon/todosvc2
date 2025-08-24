@@ -21,6 +21,24 @@ var _default = app => {
       subtitle: '(node.js + express + mongodb + mongoose + jwt)'
     });
   });
+
+  // Swagger UI routes
+  app.get('/api-docs', (req, res) => {
+    console.log("### GET /api-docs");
+    res.redirect('/console/');
+  });
+  app.get('/console', (req, res) => {
+    console.log("### GET /console");
+    res.redirect('/console/');
+  });
+
+  // Swagger JSON endpoint
+  app.get('/swagger.json', (req, res) => {
+    console.log("### GET /swagger.json");
+    res.sendFile('swagger.json', {
+      root: './public'
+    });
+  });
   app.post('/users/create', authRateLimiter, _validation.validateUserCreation, async (req, res) => {
     console.log("### POST /users/create");
     try {

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List API Console</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.css" />
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin:0;
+            background: #fafafa;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        .swagger-ui .topbar {
+            display: none;
+        }
+
+        .swagger-ui .info .title {
+            color: #3b4151;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .swagger-ui .info .description p {
+            font-size: 14px;
+            color: #3b4151;
+        }
+
+        .custom-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .custom-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+
+        .custom-header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-header">
+        <h1>Todo List API Console</h1>
+        <p>RESTful API for Todo List Management with JWT Authentication</p>
+    </div>
+    
+    <div id="swagger-ui"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js"></script>
+    
+    <script>
+        window.onload = function() {
+            // Get current host for swagger.json URL
+            const currentHost = window.location.host;
+            const protocol = window.location.protocol;
+            const swaggerUrl = `${protocol}//${currentHost}/swagger.json`;
+            
+            // Build Swagger UI
+            const ui = SwaggerUIBundle({
+                url: swaggerUrl,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                validatorUrl: null,
+                tryItOutEnabled: true,
+                requestInterceptor: function(request) {
+                    // Ensure Bearer token format
+                    if (request.headers && request.headers.Authorization) {
+                        const authHeader = request.headers.Authorization;
+                        if (!authHeader.startsWith('Bearer ')) {
+                            request.headers.Authorization = 'Bearer ' + authHeader;
+                        }
+                    }
+                    // Add CORS headers for development
+                    request.headers['Access-Control-Allow-Origin'] = '*';
+                    return request;
+                },
+                onComplete: function() {
+                    // Custom styling after load
+                    console.log('Swagger UI loaded successfully');
+                }
+            });
+
+            // Update page title
+            document.title = "Todo List API Console";
+            
+            // Hide topbar if it exists
+            setTimeout(() => {
+                const topbar = document.getElementsByClassName("topbar")[0];
+                if (topbar) {
+                    topbar.style.display = "none";
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Todo List API",
+    "description": "Todo list RESTful API service with Node.js, Express, MongoDB, and JWT authentication",
+    "version": "2.0.0",
+    "contact": {
+      "name": "Todo API Support",
+      "email": "stepanowon@hotmail.com"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": ["http", "https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Bearer token. Enter only the token value (without 'Bearer ' prefix)"
+    }
+  },
+  "paths": {
+    "/users/create": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Create new user account",
+        "description": "Register a new user account with email and password. Sample todo items are automatically created.",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/UserCreateSuccess"
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "Authenticate user and receive JWT token",
+        "parameters": [
+          {
+            "name": "credentials",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/LoginSuccess"
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/todolist": {
+      "get": {
+        "tags": ["Todo Management"],
+        "summary": "Get user's todo list",
+        "description": "Retrieve all todo items for the authenticated user",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Todo list retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoListSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Todo Management"],
+        "summary": "Create new todo item",
+        "description": "Add a new todo item for the authenticated user",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "todo",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TodoCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo created successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoCreateSuccess"
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/todolist/{id}": {
+      "get": {
+        "tags": ["Todo Management"],
+        "summary": "Get specific todo item",
+        "description": "Retrieve a specific todo item by ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo item retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoItemSuccess"
+            }
+          },
+          "400": {
+            "description": "Invalid ID parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Todo item not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Todo Management"],
+        "summary": "Update todo item",
+        "description": "Update a specific todo item",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          },
+          {
+            "name": "todo",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TodoUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo updated successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoUpdateSuccess"
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Todo item not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Todo Management"],
+        "summary": "Delete todo item",
+        "description": "Delete a specific todo item",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo deleted successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoDeleteSuccess"
+            }
+          },
+          "400": {
+            "description": "Invalid ID parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Todo item not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/todolist/{id}/done": {
+      "put": {
+        "tags": ["Todo Management"],
+        "summary": "Toggle todo completion status",
+        "description": "Toggle the done status of a specific todo item",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo status toggled successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoToggleSuccess"
+            }
+          },
+          "400": {
+            "description": "Invalid ID parameter",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Todo item not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/todolist_long": {
+      "get": {
+        "tags": ["Testing Endpoints"],
+        "summary": "Get user's todo list (with 1s delay)",
+        "description": "Retrieve all todo items with intentional 1-second delay for testing loading states",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Todo list retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoListSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Testing Endpoints"],
+        "summary": "Create new todo item (with 1s delay)",
+        "description": "Add a new todo item with intentional 1-second delay for testing loading states",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "todo",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TodoCreate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo created successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoCreateSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/todolist_long/{id}": {
+      "get": {
+        "tags": ["Testing Endpoints"],
+        "summary": "Get specific todo item (with 1s delay)",
+        "description": "Retrieve a specific todo item with intentional 1-second delay",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo item retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoItemSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Testing Endpoints"],
+        "summary": "Update todo item (with 1s delay)",
+        "description": "Update a specific todo item with intentional 1-second delay",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          },
+          {
+            "name": "todo",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TodoUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo updated successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoUpdateSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Testing Endpoints"],
+        "summary": "Delete todo item (with 1s delay)",
+        "description": "Delete a specific todo item with intentional 1-second delay",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo deleted successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoDeleteSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/todolist_long/{id}/done": {
+      "put": {
+        "tags": ["Testing Endpoints"],
+        "summary": "Toggle todo completion status (with 1s delay)",
+        "description": "Toggle the done status of a specific todo item with intentional 1-second delay",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo item ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo status toggled successfully",
+            "schema": {
+              "$ref": "#/definitions/TodoToggleSuccess"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UserCreate": {
+      "type": "object",
+      "required": ["id", "username", "password"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address (used as ID)",
+          "example": "user@example.com"
+        },
+        "username": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 50,
+          "description": "Display name (2-50 characters, letters, numbers, spaces, Korean allowed)",
+          "example": "홍길동"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 6,
+          "description": "Password (minimum 6 characters)",
+          "example": "123456"
+        }
+      }
+    },
+    "UserLogin": {
+      "type": "object",
+      "required": ["id", "password"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address",
+          "example": "user@example.com"
+        },
+        "password": {
+          "type": "string",
+          "description": "User password",
+          "example": "123456"
+        }
+      }
+    },
+    "TodoCreate": {
+      "type": "object",
+      "required": ["todo"],
+      "properties": {
+        "todo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Todo task description (1-200 characters)",
+          "example": "Complete project documentation"
+        },
+        "desc": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Optional detailed description (max 1000 characters)",
+          "example": "Write comprehensive API documentation for the project"
+        }
+      }
+    },
+    "TodoUpdate": {
+      "type": "object",
+      "required": ["todo", "done"],
+      "properties": {
+        "todo": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Todo task description (1-200 characters)",
+          "example": "Complete project documentation"
+        },
+        "desc": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Optional detailed description (max 1000 characters)",
+          "example": "Write comprehensive API documentation for the project"
+        },
+        "done": {
+          "type": "boolean",
+          "description": "Completion status",
+          "example": false
+        }
+      }
+    },
+    "Todo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Todo item ID",
+          "example": "5e103eef5f0cf40017a61727"
+        },
+        "users_id": {
+          "type": "string",
+          "format": "email",
+          "description": "Owner user ID",
+          "example": "user@example.com"
+        },
+        "todo": {
+          "type": "string",
+          "description": "Todo task description",
+          "example": "Complete project documentation"
+        },
+        "desc": {
+          "type": "string",
+          "description": "Detailed description",
+          "example": "Write comprehensive API documentation for the project"
+        },
+        "done": {
+          "type": "boolean",
+          "description": "Completion status",
+          "example": false
+        }
+      }
+    },
+    "UserCreateSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "사용자 생성 성공"
+        },
+        "_id": {
+          "type": "string",
+          "format": "email",
+          "example": "user@example.com"
+        }
+      }
+    },
+    "LoginSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "로그인 성공"
+        },
+        "token": {
+          "type": "string",
+          "description": "JWT authentication token (valid for 7 days)",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+      }
+    },
+    "TodoListSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "todolist": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Todo"
+          }
+        }
+      }
+    },
+    "TodoItemSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "todo": {
+          "$ref": "#/definitions/Todo"
+        }
+      }
+    },
+    "TodoCreateSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "할일 추가 성공"
+        },
+        "todo": {
+          "$ref": "#/definitions/Todo"
+        }
+      }
+    },
+    "TodoUpdateSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "할일 업데이트 성공"
+        },
+        "_id": {
+          "type": "string",
+          "example": "5e103eef5f0cf40017a61727"
+        }
+      }
+    },
+    "TodoDeleteSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "할일 삭제 성공"
+        },
+        "_id": {
+          "type": "string",
+          "example": "5e103eef5f0cf40017a61727"
+        }
+      }
+    },
+    "TodoToggleSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "success"
+        },
+        "message": {
+          "type": "string",
+          "example": "할일 완료 처리 성공"
+        },
+        "_id": {
+          "type": "string",
+          "example": "5e103eef5f0cf40017a61727"
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "example": "fail"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error description",
+          "example": "Invalid request parameters"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Detailed validation errors (when applicable)"
+        }
+      }
+    }
+  }
+}
