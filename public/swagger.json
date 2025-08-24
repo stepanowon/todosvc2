@@ -9,7 +9,7 @@
       "email": "stepanowon@hotmail.com"
     }
   },
-  "host": "localhost:3000",
+  "host": "todosvc2.bmaster.kro.kr",
   "basePath": "/",
   "schemes": ["http", "https"],
   "consumes": ["application/json"],
